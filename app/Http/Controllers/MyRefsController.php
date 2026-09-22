@@ -17,12 +17,28 @@ class MyRefsController extends Controller
 
         $refsClass = new ReferralService;
 
-        $refered = Master::where('id', $userId)->first();
+        $referedId = Master::find($userId)
+            ->referrals
+            ->keyBy('id')
+            ->toArray(); // Рефералы 
 
-        $refs = $refsClass->registerReferral($refered, $refered->referral_code);
+        $referedPayMent = Payment::all()->keyBy('master_id')->toArray();
 
-        $refsAmount = $refsClass->rewardAmount(Payment::where('master_id', 3)->value('amount'));
-    
-        dump(Referral::find(1)->referrerMaster);
+
+        $referedData = Master::find(array_keys($referedId))->toArray();
+
+
+
+        $dataJson[] = array_map(function ($item) use ($referedId, $refsClass, $referedPayMent) {
+            return [
+                'name' => $item['name'],
+                'created_at' => $item['created_at'],
+                'status' => $referedId[$item['id']]['status'],
+                'amount' => array_key_exists($item['id'],$referedPayMent) ? $refsClass->rewardAmount($referedPayMent[$item['id']]['amount']) : 0
+                
+            ];
+        }, $referedData);
+
+        return response($dataJson);
     }
 }
