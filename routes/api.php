@@ -1,7 +1,8 @@
 <?php
 
+use App\Http\Controllers\MyRefsController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\PostController;
 /*
 |--------------------------------------------------------------------------
 | API
@@ -16,8 +17,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/ping', fn () => ['ok' => true]);
+Route::get('/ping', fn() => ['ok' => true]);
 
+
+
+
+
+Route::prefix('referrals')->group(
+    function () {
+        Route::get('/my', [MyRefsController::class, 'myrefs']);
+        Route::post('/attach', [PostController::class, 'create']);
+    }
+);
 // TODO: POST /api/referrals/attach
 // TODO: GET  /api/referrals/my
 // TODO: GET  /api/referrals/earnings
