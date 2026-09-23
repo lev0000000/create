@@ -26,7 +26,9 @@ Route::get('/ping', fn() => ['ok' => true]);
 Route::prefix('referrals')->group(
     function () {
         Route::get('/my', [MyRefsController::class, 'myrefs']);
-        Route::post('/attach', [PostController::class, 'create']);
+        Route::post('/attach', [MyRefsController::class, 'create']);
+        Route::get('/earnings', [MyRefsController::class, 'earnings']);
+
     }
 );
 // TODO: POST /api/referrals/attach
