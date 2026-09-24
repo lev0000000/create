@@ -12,26 +12,22 @@ class ReferralService
 {
     public function registerReferral(Master $referred, string $code): ?Referral
     {
-        try {
-            $referrer = Master::where('referral_code', $code)->first();
-
-            if (empty($referrer) || $referrer->id === $referred->id) {
-                throw new Error('Нельзя пригласить самого себя');
-            }
-
-            return Referral::firstOrCreate(
-                [
-                    'referred_master_id' => $referred->id,
-                ],
-                [
-                    'referrer_master_id' => $referrer->id,
-                    'program' => Referral::PROGRAM_MASTER_INVITE,
-                    'status' => Referral::STATUS_PENDING,
-                ]
-            );
-        } catch (Error $e) {
-            throw $e;
+        $referrer = Master::where('referral_code', $code)->first();
+        
+        if (empty($referrer) || $referrer->id === $referred->id) {
+            throw new Error(' Нельзя пригласить самого себя');
         }
+
+        return Referral::firstOrCreate(
+            [
+                'referred_master_id' => $referred->id,
+            ],
+            [
+                'referrer_master_id' => $referrer->id,
+                'program' => Referral::PROGRAM_MASTER_INVITE,
+                'status' => Referral::STATUS_PENDING,
+            ]
+        );
     }
 
     public function rewardAmount(int $paymentAmount): int
